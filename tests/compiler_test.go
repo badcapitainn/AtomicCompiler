@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"simplelang/internal/ast"
 	"simplelang/internal/interpreter"
 	"simplelang/internal/lexer"
 	"simplelang/internal/parser"
@@ -53,29 +54,29 @@ print x`
 	}
 
 	parser := parser.NewParser(tokens)
-	ast, err := parser.Parse()
+	program, err := parser.Parse()
 	if err != nil {
 		t.Fatalf("Parser failed: %v", err)
 	}
 
 	// Check that we have the expected number of statements
 	expectedStatements := 3
-	if len(ast.Statements) != expectedStatements {
-		t.Errorf("Expected %d statements, got %d", expectedStatements, len(ast.Statements))
+	if len(program.Statements) != expectedStatements {
+		t.Errorf("Expected %d statements, got %d", expectedStatements, len(program.Statements))
 	}
 
 	// Check first statement is a variable declaration
-	if _, ok := ast.Statements[0].(*ast.VariableDeclaration); !ok {
+	if _, ok := program.Statements[0].(*ast.VariableDeclaration); !ok {
 		t.Error("First statement should be a VariableDeclaration")
 	}
 
 	// Check second statement is a variable declaration
-	if _, ok := ast.Statements[1].(*ast.VariableDeclaration); !ok {
+	if _, ok := program.Statements[1].(*ast.VariableDeclaration); !ok {
 		t.Error("Second statement should be a VariableDeclaration")
 	}
 
 	// Check third statement is a print statement
-	if _, ok := ast.Statements[2].(*ast.PrintStatement); !ok {
+	if _, ok := program.Statements[2].(*ast.PrintStatement); !ok {
 		t.Error("Third statement should be a PrintStatement")
 	}
 }
@@ -93,13 +94,13 @@ print result`
 	}
 
 	parser := parser.NewParser(tokens)
-	ast, err := parser.Parse()
+	program, err := parser.Parse()
 	if err != nil {
 		t.Fatalf("Parser failed: %v", err)
 	}
 
 	interpreter := interpreter.NewInterpreter()
-	err = interpreter.Interpret(ast)
+	err = interpreter.Interpret(program)
 	if err != nil {
 		t.Fatalf("Interpreter failed: %v", err)
 	}
@@ -148,13 +149,13 @@ print "Division: " + (a / b)`
 	}
 
 	parser := parser.NewParser(tokens)
-	ast, err := parser.Parse()
+	program, err := parser.Parse()
 	if err != nil {
 		t.Fatalf("Parser failed: %v", err)
 	}
 
 	interpreter := interpreter.NewInterpreter()
-	err = interpreter.Interpret(ast)
+	err = interpreter.Interpret(program)
 	if err != nil {
 		t.Fatalf("Interpreter failed: %v", err)
 	}
@@ -179,13 +180,13 @@ end`
 	}
 
 	parser := parser.NewParser(tokens)
-	ast, err := parser.Parse()
+	program, err := parser.Parse()
 	if err != nil {
 		t.Fatalf("Parser failed: %v", err)
 	}
 
 	interpreter := interpreter.NewInterpreter()
-	err = interpreter.Interpret(ast)
+	err = interpreter.Interpret(program)
 	if err != nil {
 		t.Fatalf("Interpreter failed: %v", err)
 	}
@@ -207,13 +208,13 @@ add(10, 20)`
 	}
 
 	parser := parser.NewParser(tokens)
-	ast, err := parser.Parse()
+	program, err := parser.Parse()
 	if err != nil {
 		t.Fatalf("Parser failed: %v", err)
 	}
 
 	interpreter := interpreter.NewInterpreter()
-	err = interpreter.Interpret(ast)
+	err = interpreter.Interpret(program)
 	if err != nil {
 		t.Fatalf("Interpreter failed: %v", err)
 	}

@@ -406,6 +406,7 @@ func (i *Interpreter) evaluateFunctionCall(call *ast.FunctionCall) (types.Value,
 
 // Arithmetic operations
 func (i *Interpreter) add(left, right types.Value) (types.Value, error) {
+	// Number + Number = Number
 	if _, ok := left.Type().(types.NumberType); ok {
 		if _, ok := right.Type().(types.NumberType); ok {
 			l := left.(types.NumberValue).Value
@@ -413,6 +414,8 @@ func (i *Interpreter) add(left, right types.Value) (types.Value, error) {
 			return types.NumberValue{Value: l + r}, nil
 		}
 	}
+
+	// Text + Text = Text (concatenation)
 	if _, ok := left.Type().(types.TextType); ok {
 		if _, ok := right.Type().(types.TextType); ok {
 			l := left.(types.TextValue).Value
@@ -420,6 +423,25 @@ func (i *Interpreter) add(left, right types.Value) (types.Value, error) {
 			return types.TextValue{Value: l + r}, nil
 		}
 	}
+
+	// Text + Number = Text (concatenation with number converted to string)
+	if _, ok := left.Type().(types.TextType); ok {
+		if _, ok := right.Type().(types.NumberType); ok {
+			l := left.(types.TextValue).Value
+			r := right.(types.NumberValue).Value
+			return types.TextValue{Value: l + fmt.Sprintf("%g", r)}, nil
+		}
+	}
+
+	// Number + Text = Text (concatenation with number converted to string)
+	if _, ok := left.Type().(types.NumberType); ok {
+		if _, ok := right.Type().(types.TextType); ok {
+			l := left.(types.NumberValue).Value
+			r := right.(types.TextValue).Value
+			return types.TextValue{Value: fmt.Sprintf("%g", l) + r}, nil
+		}
+	}
+
 	return nil, fmt.Errorf("cannot add %s and %s", left.Type().String(), right.Type().String())
 }
 
